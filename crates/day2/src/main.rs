@@ -1,11 +1,12 @@
 fn main() {
     let list: Vec<Vec<u32>> = include_str!("input.txt")
-    .lines()
-    .map(|line| {
-        let list = line.split_whitespace().map( |x| x.parse().unwrap() );
-        list.collect::<Vec<_>>()
-    })
-    .collect::<Vec<_>>();    
+        .lines()
+        .map(|line| {
+            line.split_whitespace()
+                .map(|x| x.parse().unwrap())
+                .collect::<Vec<_>>()
+        })
+        .collect::<Vec<_>>();
 
     let p1 = part1(&list);
     println!("p1:: {:?}", p1);
@@ -15,41 +16,42 @@ fn main() {
 }
 
 fn part1(reports: &Vec<Vec<u32>>) -> u32 {
-    reports.into_iter().filter_map(|r| {
-        check_report(r)
-    }).count() as u32
+    reports.into_iter().filter_map(check_report).count() as u32
 }
 
 fn part2(reports: &Vec<Vec<u32>>) -> u32 {
-    reports.into_iter().filter_map(|r| {
-
-        let safe = check_report(r);
-        if let Some(true) = safe {
-            return Some(true);
-        }
-
-        // handle a single failure
-        let mut i = 0;
-        while i < r.len() {
-            let mut r2 = r.clone();
-            r2.remove(i);
-            
-            let safe = check_report(&r2);
-            if let Some(true) = safe {
+    reports
+        .into_iter()
+        .filter_map(|r| {
+            let safe = check_report(r);
+            if safe.is_some() {
                 return Some(true);
             }
-            i += 1;
-        }
-        None
-    }).count() as u32
+
+            // handle a single failure by removing one element at a time
+            // and check if the report is safe
+            let mut i = 0;
+            while i < r.len() {
+                let mut r2 = r.clone();
+                r2.remove(i);
+
+                let safe = check_report(&r2);
+                if safe.is_some() {
+                    return Some(true);
+                }
+                i += 1;
+            }
+            None
+        })
+        .count() as u32
 }
 
 fn check_report(r: &Vec<u32>) -> Option<bool> {
     // check always increasing or all decreasing
     if r.is_sorted_by(|a, b| a < b) || r.is_sorted_by(|a, b| a > b) {
-        // check rate change at most 3            
+        // check rate change at most 3
         for i in 0..r.len() - 1 {
-            if r[i].abs_diff(r[i+1]) > 3 {
+            if r[i].abs_diff(r[i + 1]) > 3 {
                 return None;
             }
         }
@@ -70,11 +72,11 @@ mod tests {
             vec![9, 7, 6, 2, 1],
             vec![1, 3, 2, 4, 5],
             vec![8, 6, 4, 4, 1],
-            vec![1, 3, 6, 7, 9],            
+            vec![1, 3, 6, 7, 9],
         ];
 
         let d = part1(&list);
-        assert_eq!(d, 2);        
+        assert_eq!(d, 2);
     }
 
     #[test]
@@ -85,10 +87,10 @@ mod tests {
             vec![9, 7, 6, 2, 1],
             vec![1, 3, 2, 4, 5],
             vec![8, 6, 4, 4, 1],
-            vec![1, 3, 6, 7, 9],            
+            vec![1, 3, 6, 7, 9],
         ];
 
         let d = part2(&list);
-        assert_eq!(d, 4);        
+        assert_eq!(d, 4);
     }
 }
