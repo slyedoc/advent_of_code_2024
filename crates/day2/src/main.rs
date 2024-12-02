@@ -16,16 +16,15 @@ fn main() {
 }
 
 fn part1(reports: &Vec<Vec<u32>>) -> u32 {
-    reports.into_iter().filter_map(check_report).count() as u32
+    reports.into_iter().map(check_report).filter(|a| *a).count() as u32
 }
 
 fn part2(reports: &Vec<Vec<u32>>) -> u32 {
     reports
         .into_iter()
-        .filter_map(|r| {
-            let safe = check_report(r);
-            if safe.is_some() {
-                return Some(true);
+        .map(|r| {
+            if check_report(r) {
+                return true;
             }
 
             // handle a single failure by removing one element at a time
@@ -33,31 +32,31 @@ fn part2(reports: &Vec<Vec<u32>>) -> u32 {
             let mut i = 0;
             while i < r.len() {
                 let mut r2 = r.clone();
-                r2.remove(i);
-
-                let safe = check_report(&r2);
-                if safe.is_some() {
-                    return Some(true);
+                r2.remove(i);                
+                if check_report(&r2) {
+                    return true;
                 }
                 i += 1;
             }
-            None
+            false
         })
+        .filter(|a| *a)
         .count() as u32
 }
 
-fn check_report(r: &Vec<u32>) -> Option<bool> {
+// check if the report is safe
+fn check_report(r: &Vec<u32>) -> bool {
     // check always increasing or all decreasing
     if r.is_sorted_by(|a, b| a < b) || r.is_sorted_by(|a, b| a > b) {
         // check rate change at most 3
         for i in 0..r.len() - 1 {
             if r[i].abs_diff(r[i + 1]) > 3 {
-                return None;
+                return false;
             }
         }
-        return Some(true);
+        return true;
     }
-    None
+    false
 }
 
 #[cfg(test)]
