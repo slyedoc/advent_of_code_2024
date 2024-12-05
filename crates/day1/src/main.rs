@@ -10,10 +10,10 @@ fn main() {
         .collect();
 
     let p1 = part1(list.clone());
-    println!("p1:: {:?}", p1);
+    println!("p1: {:?}", p1);
 
     let p2 = part2(list.clone());
-    println!("p2:: {:?}", p2);
+    println!("p2: {:?}", p2);
 }
 
 fn part1(list: Vec<(u32, u32)>) -> u32 {

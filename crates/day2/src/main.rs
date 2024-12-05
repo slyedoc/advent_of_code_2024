@@ -9,10 +9,10 @@ fn main() {
         .collect::<Vec<_>>();
 
     let p1 = part1(&list);
-    println!("p1:: {:?}", p1);
+    println!("p1: {:?}", p1);
 
     let p2 = part2(&list);
-    println!("p2:: {:?}", p2);
+    println!("p2: {:?}", p2);
 }
 
 fn part1(reports: &Vec<Vec<u32>>) -> u32 {
