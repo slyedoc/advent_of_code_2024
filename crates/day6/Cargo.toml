@@ -1,0 +1,13 @@
+[package]
+name = "day6"
+version = "0.1.0"
+edition = "2024"
+
+[features]
+default = ["parallel"]
+print = []
+parallel = []
+
+[dependencies]
+glam = "0.29"
+rayon = "1.10"
