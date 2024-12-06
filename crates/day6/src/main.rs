@@ -69,18 +69,9 @@ fn part1(map: &Vec<Vec<char>>) -> u32 {
     // store the locations we have been to with direction we where going at the time
     let mut locations: Vec<Location> = Vec::new();
 
-    // find the starting position
-    let mut guard = None;
-    for x in 0..map.len() {
-        for y in 0..map[0].len() {
-            if map[x][y] == '^' {
-                guard = Some((x, y));
-            }
-        }
-    }
-    let (x, y) = guard.expect("Guard not found");
+    // find the starting position    
     let mut pos = Location {
-        position: UVec2::new(x as u32, y as u32),
+        position: find_guard_pos(map).expect("No guard found"),
         direction: Direction::Up,
     };
 
@@ -110,8 +101,9 @@ fn part1(map: &Vec<Vec<char>>) -> u32 {
 
     // count unique locations
     let unique_locs = locations.iter().map(|x| x.position).collect::<HashSet<_>>();
-    // print the map with the unique locations marked
+
     #[cfg(feature = "print")]
+    // print the map with the unique locations marked
     for x in 0..map.len() {
         for y in 0..map[0].len() {
             let c = map[x][y];
@@ -128,19 +120,9 @@ fn part1(map: &Vec<Vec<char>>) -> u32 {
 
 fn part2(map: &mut Vec<Vec<char>>) -> usize {
     let mut count = 0;
-    // find the starting position
-    let mut guard = None;
-    for x in 0..map.len() {
-        for y in 0..map[0].len() {
-            let c = map[x][y];
-            if c == '^' {
-                guard = Some((x, y));
-            }
-        }
-    }
-    let (x, y) = guard.expect("Guard not found");
+    // find the starting position    
     let start_pos = Location {
-        position: UVec2::new(x as u32, y as u32),
+        position: find_guard_pos(map).expect("No guard found"),
         direction: Direction::Up,
     };
 
@@ -184,6 +166,18 @@ fn part2(map: &mut Vec<Vec<char>>) -> usize {
             .sum::<usize>();
     }
     count
+}
+
+fn find_guard_pos(map: &Vec<Vec<char>>) -> Option<UVec2> {
+    for x in 0..map.len() {
+        for y in 0..map[0].len() {
+            let c = map[x][y];
+            if c == '^' {
+                return Some(UVec2::new(x as u32, y as u32))
+            }
+        }
+    }
+    None
 }
 
 fn does_map_loop(pos: &Location, map: &Vec<Vec<char>>) -> bool {
@@ -258,7 +252,7 @@ mod tests {
         .map(|l| l.chars().collect())
         .collect::<Vec<_>>();
 
-        //assert_eq!(part1(&map), 41);
+        assert_eq!(part1(&map), 41);
         assert_eq!(part2(&mut map), 6);
     }
 }
